@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_medium"
+        android:layout_marginTop="@dimen/space_small"
+        android:layout_marginEnd="@dimen/space_medium"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="@dimen/text_size_normal"
+        tools:text="Date" />
+
+    <TextView
+        android:id="@+id/text_average_temp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_medium"
+        android:layout_marginTop="@dimen/space_small"
+        android:layout_marginEnd="@dimen/space_medium"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="@dimen/text_size_normal"
+        tools:text="Average Temperature" />
+
+    <TextView
+        android:id="@+id/text_pressure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_medium"
+        android:layout_marginTop="@dimen/space_small"
+        android:layout_marginEnd="@dimen/space_medium"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="@dimen/text_size_normal"
+        tools:text="Pressure" />
+
+    <TextView
+        android:id="@+id/text_humidity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_medium"
+        android:layout_marginTop="@dimen/space_small"
+        android:layout_marginEnd="@dimen/space_medium"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="@dimen/text_size_normal"
+        tools:text="Humidity" />
+
+    <TextView
+        android:id="@+id/text_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_medium"
+        android:layout_marginTop="@dimen/space_small"
+        android:layout_marginEnd="@dimen/space_medium"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="@dimen/text_size_normal"
+        tools:text="Description" />
+
+</LinearLayout>

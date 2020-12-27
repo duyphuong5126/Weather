@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyWeather</string>
+    <string name="city_name">City name</string>
+
+    <string name="date_template">Date: %s</string>
+    <string name="average_temp_template">Average Temperature: %s</string>
+    <string name="pressure_template">Pressure: %d</string>
+    <string name="humidity_template">Humidity: %s</string>
+    <string name="description_template">Description: %s</string>
+    <string name="get_weather">Get Weather</string>
+</resources>
