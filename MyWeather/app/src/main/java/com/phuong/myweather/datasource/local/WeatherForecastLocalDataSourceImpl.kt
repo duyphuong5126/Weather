@@ -22,7 +22,7 @@ class WeatherForecastLocalDataSourceImpl @Inject constructor(
     ): Maybe<List<WeatherForecast>> {
         return forecastResultDAO.getMatchedResults(searchQuery, daysRange)
             .flatMap {
-                if (it.isEmpty()) {
+                if (it.size < daysRange) {
                     Maybe.empty()
                 } else {
                     Maybe.just(models2Entities(it))

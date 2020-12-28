@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.phuong.myweather.datasource.remote.error.ApiError
 import com.phuong.myweather.domain.entity.SearchForecastResult.ValidationError
+import com.phuong.myweather.domain.entity.SearchForecastResult.InvalidDayRange
 import com.phuong.myweather.domain.entity.SearchForecastResult.ForecastResults
 import com.phuong.myweather.domain.entity.TemperatureUnit
 import com.phuong.myweather.domain.entity.WeatherForecast
@@ -38,6 +39,10 @@ class WeatherForecastViewModelImpl @Inject constructor(
     override val searchErrorLiveData: LiveData<String>
         get() = _searchErrorLiveData
 
+    private val _daysRangeErrorLiveData = MutableLiveData<String>()
+    override val daysRangeErrorLiveData: LiveData<String>
+        get() = _daysRangeErrorLiveData
+
     override fun getWeatherForecast(
         rawSearchQuery: String,
         daysRange: Int,
@@ -51,7 +56,15 @@ class WeatherForecastViewModelImpl @Inject constructor(
                     is ValidationError -> {
                         _weatherForecastLiveData.postValue(emptyList())
                         _searchErrorLiveData.postValue(null)
+                        _daysRangeErrorLiveData.postValue(null)
                         _searchValidationErrorLiveData.postValue(it.message)
+                    }
+
+                    is InvalidDayRange -> {
+                        _weatherForecastLiveData.postValue(emptyList())
+                        _searchErrorLiveData.postValue(null)
+                        _daysRangeErrorLiveData.postValue(it.message)
+                        _searchValidationErrorLiveData.postValue(null)
                     }
 
                     is ForecastResults -> {
@@ -59,6 +72,7 @@ class WeatherForecastViewModelImpl @Inject constructor(
                         Timber.d("Fetched ${weatherForecasts.size} items")
                         _weatherForecastLiveData.postValue(weatherForecasts)
                         _searchErrorLiveData.postValue(null)
+                        _daysRangeErrorLiveData.postValue(null)
                         _searchValidationErrorLiveData.postValue(null)
                     }
                 }
@@ -71,6 +85,7 @@ class WeatherForecastViewModelImpl @Inject constructor(
                 }
                 _weatherForecastLiveData.postValue(emptyList())
                 _searchErrorLiveData.postValue(error)
+                _daysRangeErrorLiveData.postValue(null)
                 _searchValidationErrorLiveData.postValue(null)
             }).let(compositeDisposable::add)
     }

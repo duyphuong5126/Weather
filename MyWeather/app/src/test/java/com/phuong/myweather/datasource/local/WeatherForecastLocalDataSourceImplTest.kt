@@ -57,6 +57,25 @@ class WeatherForecastLocalDataSourceImplTest {
     }
 
     @Test
+    fun `getWeatherForecast, local cache is not empty but not enough data as requested`() {
+        val localModel = TestDataProvider.generateForecastResultModel(
+            searchQuery = "saigon",
+            date = 1609041600000,
+            avgTemp = 25.0,
+            avgTempUnit = Celsius.code,
+            pressure = 1012,
+            humidity = 74,
+            description = "broken clouds"
+        )
+        whenever(forecastResultDAO.getMatchedResults("saigon", 7))
+            .thenReturn(Maybe.just(listOf(localModel)))
+
+        localDataSourceImpl.getWeatherForecast("saigon", 7)
+            .test()
+            .assertComplete()
+    }
+
+    @Test
     fun saveSearchResult() {
         val weatherForecast = TestDataProvider.generateWeatherForecast(
             dateLong = 1609041600000,

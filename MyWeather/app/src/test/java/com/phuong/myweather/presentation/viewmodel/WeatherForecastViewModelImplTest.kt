@@ -5,11 +5,13 @@ import com.jraska.livedata.TestObserver
 import com.phuong.myweather.TestDataProvider
 import com.phuong.myweather.TestSchedulersProvider
 import com.phuong.myweather.domain.entity.SearchForecastResult.ForecastResults
+import com.phuong.myweather.domain.entity.SearchForecastResult.InvalidDayRange
 import com.phuong.myweather.domain.entity.SearchForecastResult.ValidationError
 import com.phuong.myweather.domain.entity.TemperatureUnit.Celsius
 import com.phuong.myweather.domain.entity.TemperatureUnit.Fahrenheit
 import com.phuong.myweather.domain.entity.TemperatureUnit.Kelvin
 import com.phuong.myweather.domain.usecase.GetWeatherForecastUseCase
+import com.phuong.myweather.utils.Constants.INVALID_DAYS_RANGE
 import com.phuong.myweather.utils.Constants.NETWORK_ERROR
 import com.phuong.myweather.utils.Constants.SEARCH_TERM_LENGTH_NOT_ENOUGH
 import com.phuong.myweather.utils.Constants.WEATHER_FORECAST_GENERAL_ERROR
@@ -50,6 +52,10 @@ class WeatherForecastViewModelImplTest {
             .assertHasValue()
             .assertValue(null)
 
+        TestObserver.test(viewModelImpl.daysRangeErrorLiveData)
+            .assertHasValue()
+            .assertValue(null)
+
         TestObserver.test(viewModelImpl.searchErrorLiveData)
             .assertHasValue()
             .assertValue(null)
@@ -78,6 +84,10 @@ class WeatherForecastViewModelImplTest {
         verify(getWeatherForecastUseCase).execute(SEARCH_TERM, 1, Fahrenheit)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
+            .assertHasValue()
+            .assertValue(null)
+
+        TestObserver.test(viewModelImpl.daysRangeErrorLiveData)
             .assertHasValue()
             .assertValue(null)
 
@@ -112,6 +122,10 @@ class WeatherForecastViewModelImplTest {
             .assertHasValue()
             .assertValue(null)
 
+        TestObserver.test(viewModelImpl.daysRangeErrorLiveData)
+            .assertHasValue()
+            .assertValue(null)
+
         TestObserver.test(viewModelImpl.searchErrorLiveData)
             .assertHasValue()
             .assertValue(null)
@@ -142,6 +156,36 @@ class WeatherForecastViewModelImplTest {
             .assertHasValue()
             .assertValue(SEARCH_TERM_LENGTH_NOT_ENOUGH)
 
+        TestObserver.test(viewModelImpl.daysRangeErrorLiveData)
+            .assertHasValue()
+            .assertValue(null)
+
+        TestObserver.test(viewModelImpl.searchErrorLiveData)
+            .assertHasValue()
+            .assertValue(null)
+
+        TestObserver.test(viewModelImpl.weatherForecastLiveData)
+            .assertHasValue()
+            .assertValue(List<WeatherForecastUiModel>::isEmpty)
+    }
+
+    @Test
+    fun `getWeatherForecast, use-case returns invalid days range error`() {
+        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius))
+            .thenReturn(Single.just(InvalidDayRange(INVALID_DAYS_RANGE)))
+
+        viewModelImpl.getWeatherForecast(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+
+        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+
+        TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
+            .assertHasValue()
+            .assertValue(null)
+
+        TestObserver.test(viewModelImpl.daysRangeErrorLiveData)
+            .assertHasValue()
+            .assertValue(INVALID_DAYS_RANGE)
+
         TestObserver.test(viewModelImpl.searchErrorLiveData)
             .assertHasValue()
             .assertValue(null)
@@ -162,6 +206,10 @@ class WeatherForecastViewModelImplTest {
         verify(getWeatherForecastUseCase).execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
+            .assertHasValue()
+            .assertValue(null)
+
+        TestObserver.test(viewModelImpl.daysRangeErrorLiveData)
             .assertHasValue()
             .assertValue(null)
 
@@ -188,6 +236,10 @@ class WeatherForecastViewModelImplTest {
             .assertHasValue()
             .assertValue(null)
 
+        TestObserver.test(viewModelImpl.daysRangeErrorLiveData)
+            .assertHasValue()
+            .assertValue(null)
+
         TestObserver.test(viewModelImpl.searchErrorLiveData)
             .assertHasValue()
             .assertValue("city not found")
@@ -208,6 +260,10 @@ class WeatherForecastViewModelImplTest {
         verify(getWeatherForecastUseCase).execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
+            .assertHasValue()
+            .assertValue(null)
+
+        TestObserver.test(viewModelImpl.daysRangeErrorLiveData)
             .assertHasValue()
             .assertValue(null)
 

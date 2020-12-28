@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MyWeather</string>
     <string name="city_name">City name</string>
+    <string name="num_days">Number of days</string>
 
     <string name="date_template">Date: %s</string>
     <string name="average_temp_template">Average Temperature: %s</string>
