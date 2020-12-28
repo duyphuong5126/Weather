@@ -1,8 +1,10 @@
 package com.phuong.myweather.presentation
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
@@ -77,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         searchError = findViewById(R.id.text_error)
 
         buttonGetWeather.setOnClickListener {
+            hideSoftKeyboard()
             viewModel.getWeatherForecast(searchInput.text?.toString().orEmpty(), daysRange, Celsius)
         }
 
@@ -95,6 +98,13 @@ class MainActivity : AppCompatActivity() {
         AndroidInjection.inject(this)
         viewModel =
             ViewModelProviders.of(this, viewModelFactory)[WeatherForecastViewModelImpl::class.java]
+    }
+
+    private fun hideSoftKeyboard() {
+        currentFocus?.let {
+            (getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
+                ?.hideSoftInputFromWindow(it.windowToken, 0)
+        }
     }
 
     companion object {
