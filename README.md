@@ -23,12 +23,12 @@ Technical requirements:
 * UI looks like the attached image. Plus: 
   * Input text area for forecast time range. 
   * Error validation of Search term and forecast time range.
-* UnitTests
-* AcceptanceTests
+* Unit Tests
+* Acceptance Tests
 * Exception handling
 * Caching handling
 * Scaling: change the size of items on the device's screen
-* ReadMe (this file)
+* README (this file)
 
 ## Architecture & Techniques
 * Architecture: Clean Architecture
