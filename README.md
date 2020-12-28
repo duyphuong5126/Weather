@@ -1,10 +1,10 @@
 ## Table of content
-* [Done items](done-items)
-* [Architecture & Techniques](architecture-&-techniques)
-* [Project structure](project-structure)
-* [Main libraries](main-libraries)
-* [Setup project](setup-project)
-* [Requisites](requisites)
+* Done items
+* Architecture & Techniques
+* Project structure
+* Main libraries
+* Setup project
+* Requisites
 
 ## Done items
 Features:
