@@ -9,6 +9,7 @@ import com.phuong.myweather.domain.entity.TemperatureUnit
 import com.phuong.myweather.utils.Constants.INVALID_DAYS_RANGE
 import com.phuong.myweather.utils.Constants.SEARCH_TERM_LENGTH_NOT_ENOUGH
 import io.reactivex.Single
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -17,6 +18,7 @@ class GetWeatherForecastUseCaseImpl @Inject constructor(
 ) : GetWeatherForecastUseCase {
     override fun execute(
         rawSearchQuery: String,
+        sinceDate: Date,
         daysRange: Int,
         temperatureUnit: TemperatureUnit
     ): Single<SearchForecastResult> {
@@ -31,7 +33,7 @@ class GetWeatherForecastUseCaseImpl @Inject constructor(
             }
 
             else -> {
-                repository.getDailyForecast(searchQuery, daysRange, temperatureUnit)
+                repository.getDailyForecast(searchQuery, sinceDate, daysRange, temperatureUnit)
                     .map(::ForecastResults)
             }
         }

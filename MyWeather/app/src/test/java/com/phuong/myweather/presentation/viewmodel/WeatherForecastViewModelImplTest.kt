@@ -24,6 +24,9 @@ import org.junit.rules.TestRule
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import java.net.UnknownHostException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import org.mockito.Mockito.`when` as whenever
 
 class WeatherForecastViewModelImplTest {
@@ -35,18 +38,25 @@ class WeatherForecastViewModelImplTest {
         schedulersProvider
     )
 
+    private val today: Date
+
+    init {
+        val dateFormat = SimpleDateFormat("EEE',' dd MMM yyyy HH':'mm':'ss 'GMT'", Locale.US)
+        today = dateFormat.parse("Sun, 03 Jan 2021 09:09:09 GMT")!!
+    }
+
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
 
     @Test
     fun `getWeatherForecast, use-case returns normal data using Celsius unit`() {
         val oneDayForecast = listOf(Day1ForecastCelsius)
-        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, 1, Celsius))
+        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, today, 1, Celsius))
             .thenReturn(Single.just(ForecastResults(oneDayForecast)))
 
-        viewModelImpl.getWeatherForecast(SEARCH_TERM, 1, Celsius)
+        viewModelImpl.getWeatherForecast(SEARCH_TERM, today, 1, Celsius)
 
-        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, 1, Celsius)
+        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, today, 1, Celsius)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
             .assertHasValue()
@@ -76,12 +86,12 @@ class WeatherForecastViewModelImplTest {
     @Test
     fun `getWeatherForecast, use-case returns normal data using Fahrenheit unit`() {
         val oneDayForecast = listOf(Day1ForecastFahrenheit)
-        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, 1, Fahrenheit))
+        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, today, 1, Fahrenheit))
             .thenReturn(Single.just(ForecastResults(oneDayForecast)))
 
-        viewModelImpl.getWeatherForecast(SEARCH_TERM, 1, Fahrenheit)
+        viewModelImpl.getWeatherForecast(SEARCH_TERM, today, 1, Fahrenheit)
 
-        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, 1, Fahrenheit)
+        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, today, 1, Fahrenheit)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
             .assertHasValue()
@@ -111,12 +121,12 @@ class WeatherForecastViewModelImplTest {
     @Test
     fun `getWeatherForecast, use-case returns normal data using Kelvin unit`() {
         val oneDayForecast = listOf(Day1ForecastKelvin)
-        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, 1, Kelvin))
+        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, today, 1, Kelvin))
             .thenReturn(Single.just(ForecastResults(oneDayForecast)))
 
-        viewModelImpl.getWeatherForecast(SEARCH_TERM, 1, Kelvin)
+        viewModelImpl.getWeatherForecast(SEARCH_TERM, today, 1, Kelvin)
 
-        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, 1, Kelvin)
+        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, today, 1, Kelvin)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
             .assertHasValue()
@@ -145,12 +155,24 @@ class WeatherForecastViewModelImplTest {
 
     @Test
     fun `getWeatherForecast, use-case returns validation error`() {
-        whenever(getWeatherForecastUseCase.execute(BAD_SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius))
+        whenever(
+            getWeatherForecastUseCase.execute(
+                BAD_SEARCH_TERM,
+                today,
+                DEFAULT_DAYS_RANGE,
+                Celsius
+            )
+        )
             .thenReturn(Single.just(ValidationError(SEARCH_TERM_LENGTH_NOT_ENOUGH)))
 
-        viewModelImpl.getWeatherForecast(BAD_SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        viewModelImpl.getWeatherForecast(BAD_SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius)
 
-        verify(getWeatherForecastUseCase).execute(BAD_SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        verify(getWeatherForecastUseCase).execute(
+            BAD_SEARCH_TERM,
+            today,
+            DEFAULT_DAYS_RANGE,
+            Celsius
+        )
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
             .assertHasValue()
@@ -171,12 +193,12 @@ class WeatherForecastViewModelImplTest {
 
     @Test
     fun `getWeatherForecast, use-case returns invalid days range error`() {
-        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius))
+        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius))
             .thenReturn(Single.just(InvalidDayRange(INVALID_DAYS_RANGE)))
 
-        viewModelImpl.getWeatherForecast(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        viewModelImpl.getWeatherForecast(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius)
 
-        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
             .assertHasValue()
@@ -198,12 +220,12 @@ class WeatherForecastViewModelImplTest {
     @Test
     fun `getWeatherForecast, use-case fails due to network connection error`() {
         val networkError = TestDataProvider.generateApiError("", UnknownHostException())
-        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius))
+        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius))
             .thenReturn(Single.error(networkError))
 
-        viewModelImpl.getWeatherForecast(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        viewModelImpl.getWeatherForecast(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius)
 
-        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
             .assertHasValue()
@@ -225,12 +247,12 @@ class WeatherForecastViewModelImplTest {
     @Test
     fun `getWeatherForecast, use-case fails due to invalid city error`() {
         val invalidCityError = TestDataProvider.generateApiError("city not found", null)
-        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius))
+        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius))
             .thenReturn(Single.error(invalidCityError))
 
-        viewModelImpl.getWeatherForecast(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        viewModelImpl.getWeatherForecast(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius)
 
-        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
             .assertHasValue()
@@ -252,12 +274,12 @@ class WeatherForecastViewModelImplTest {
     @Test
     fun `getWeatherForecast, use-case fails due to unknown error`() {
         val randomError = NullPointerException()
-        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius))
+        whenever(getWeatherForecastUseCase.execute(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius))
             .thenReturn(Single.error(randomError))
 
-        viewModelImpl.getWeatherForecast(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        viewModelImpl.getWeatherForecast(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius)
 
-        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, DEFAULT_DAYS_RANGE, Celsius)
+        verify(getWeatherForecastUseCase).execute(SEARCH_TERM, today, DEFAULT_DAYS_RANGE, Celsius)
 
         TestObserver.test(viewModelImpl.searchValidationErrorLiveData)
             .assertHasValue()

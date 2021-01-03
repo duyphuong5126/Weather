@@ -16,7 +16,9 @@ import org.junit.Assert.assertEquals
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import org.mockito.Mockito.`when` as whenever
 
 class WeatherForecastRepositoryImplTest {
@@ -26,6 +28,13 @@ class WeatherForecastRepositoryImplTest {
 
     private val repositoryImpl =
         WeatherForecastRepositoryImpl(remoteDataSource, localDataSource, schedulersProvider)
+
+    private val today: Date
+
+    init {
+        val dateFormat = SimpleDateFormat("EEE',' dd MMM yyyy HH':'mm':'ss 'GMT'", Locale.US)
+        today = dateFormat.parse("Sun, 03 Jan 2021 09:09:09 GMT")!!
+    }
 
     @Test
     fun `getDailyForecast, local cache is empty`() {
@@ -44,10 +53,10 @@ class WeatherForecastRepositoryImplTest {
         whenever(remoteDataSource.getDailyForecast("saigon", 1, Celsius.code))
             .thenReturn(Single.just(response))
 
-        whenever(localDataSource.getWeatherForecast("saigon", 1))
+        whenever(localDataSource.getWeatherForecast("saigon", today, 1))
             .thenReturn(Maybe.empty())
 
-        repositoryImpl.getDailyForecast("saigon", 1, Celsius)
+        repositoryImpl.getDailyForecast("saigon", today, 1, Celsius)
             .test()
             .assertValue {
                 assertEquals(1, it.size)
@@ -61,7 +70,7 @@ class WeatherForecastRepositoryImplTest {
                 true
             }
 
-        verify(localDataSource).getWeatherForecast("saigon", 1)
+        verify(localDataSource).getWeatherForecast("saigon", today, 1)
         verify(remoteDataSource).getDailyForecast("saigon", 1, Celsius.code)
         verify(localDataSource).saveSearchResult(safeEq("saigon"), safeAnyList())
     }
@@ -70,10 +79,10 @@ class WeatherForecastRepositoryImplTest {
     fun `getDailyForecast, local cache is not empty`() {
         whenever(remoteDataSource.getDailyForecast("saigon", 1, Celsius.code))
             .thenReturn(Single.just(ForecastResponseData(emptyList())))
-        whenever(localDataSource.getWeatherForecast("saigon", 1))
+        whenever(localDataSource.getWeatherForecast("saigon", today, 1))
             .thenReturn(Maybe.just(listOf(Day1ForecastCelsius)))
 
-        repositoryImpl.getDailyForecast("saigon", 1, Celsius)
+        repositoryImpl.getDailyForecast("saigon", today, 1, Celsius)
             .test()
             .assertValue {
                 assertEquals(1, it.size)
@@ -81,7 +90,7 @@ class WeatherForecastRepositoryImplTest {
                 true
             }
 
-        verify(localDataSource).getWeatherForecast("saigon", 1)
+        verify(localDataSource).getWeatherForecast("saigon", today, 1)
         verify(remoteDataSource).getDailyForecast("saigon", 1, Celsius.code)
         verify(localDataSource, never()).saveSearchResult(safeAnyString(), safeAnyList())
     }

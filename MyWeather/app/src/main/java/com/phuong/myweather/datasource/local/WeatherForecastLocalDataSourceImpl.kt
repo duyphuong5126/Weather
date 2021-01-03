@@ -5,7 +5,9 @@ import com.phuong.myweather.datasource.local.db.ForecastResultModel
 import com.phuong.myweather.domain.entity.Temperature
 import com.phuong.myweather.domain.entity.TemperatureUnit
 import com.phuong.myweather.domain.entity.WeatherForecast
+import com.phuong.myweather.utils.getMidnight
 import io.reactivex.Maybe
+import timber.log.Timber
 import java.util.Date
 import javax.inject.Inject
 
@@ -18,9 +20,12 @@ class WeatherForecastLocalDataSourceImpl @Inject constructor(
 
     override fun getWeatherForecast(
         searchQuery: String,
+        sinceDate: Date,
         daysRange: Int
     ): Maybe<List<WeatherForecast>> {
-        return forecastResultDAO.getMatchedResults(searchQuery, daysRange)
+        val sinceMidnight = sinceDate.getMidnight()
+        Timber.d("Original date: $sinceDate, midnight: $sinceMidnight")
+        return forecastResultDAO.getMatchedResults(searchQuery, sinceMidnight.time, daysRange)
             .flatMap {
                 if (it.size < daysRange) {
                     Maybe.empty()

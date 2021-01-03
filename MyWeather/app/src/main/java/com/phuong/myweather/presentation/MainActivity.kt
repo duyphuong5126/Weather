@@ -23,6 +23,7 @@ import com.phuong.myweather.presentation.viewmodel.WeatherForecastViewModel
 import com.phuong.myweather.presentation.viewmodel.WeatherForecastViewModelImpl
 import com.phuong.myweather.view.WeatherForecastAdapter
 import dagger.android.AndroidInjection
+import java.util.Date
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -80,7 +81,12 @@ class MainActivity : AppCompatActivity() {
 
         buttonGetWeather.setOnClickListener {
             hideSoftKeyboard()
-            viewModel.getWeatherForecast(searchInput.text?.toString().orEmpty(), daysRange, Celsius)
+            viewModel.getWeatherForecast(
+                searchInput.text?.toString().orEmpty(),
+                Date(),
+                daysRange,
+                Celsius
+            )
         }
 
         daysRangeInput.setText("$DEFAULT_DAYS_RANGE")

@@ -18,6 +18,7 @@ import com.phuong.myweather.view.WeatherForecastUiModel
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -45,10 +46,11 @@ class WeatherForecastViewModelImpl @Inject constructor(
 
     override fun getWeatherForecast(
         rawSearchQuery: String,
+        sinceDate: Date,
         daysRange: Int,
         tempUnit: TemperatureUnit
     ) {
-        getWeatherForecastUseCase.execute(rawSearchQuery, daysRange, tempUnit)
+        getWeatherForecastUseCase.execute(rawSearchQuery, sinceDate, daysRange, tempUnit)
             .subscribeOn(schedulersProvider.io())
             .observeOn(schedulersProvider.mainThread())
             .subscribe({

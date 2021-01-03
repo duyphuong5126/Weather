@@ -20,6 +20,7 @@ class WeatherForecastRepositoryImpl @Inject constructor(
 ) : WeatherForecastRepository {
     override fun getDailyForecast(
         query: String,
+        sinceDate: Date,
         daysRange: Int,
         temperatureUnit: TemperatureUnit
     ): Single<List<WeatherForecast>> {
@@ -33,7 +34,7 @@ class WeatherForecastRepositoryImpl @Inject constructor(
             localDataSource.saveSearchResult(query, it)
         }
 
-        val localSource = localDataSource.getWeatherForecast(query, daysRange)
+        val localSource = localDataSource.getWeatherForecast(query, sinceDate, daysRange)
 
         return localSource.switchIfEmpty(remoteSource)
     }

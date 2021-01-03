@@ -14,6 +14,10 @@ interface ForecastResultDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(resultList: List<ForecastResultModel>): List<Long>
 
-    @Query("select * from $TABLE_FORECAST_RESULT where $COLUMN_SEARCH_QUERY = :searchQuery order by $COLUMN_DATE asc limit :daysRange")
-    fun getMatchedResults(searchQuery: String, daysRange: Int): Maybe<List<ForecastResultModel>>
+    @Query("select * from $TABLE_FORECAST_RESULT where $COLUMN_SEARCH_QUERY = :searchQuery and $COLUMN_DATE >= :sinceDate order by $COLUMN_DATE asc limit :daysRange")
+    fun getMatchedResults(
+        searchQuery: String,
+        sinceDate: Long,
+        daysRange: Int
+    ): Maybe<List<ForecastResultModel>>
 }

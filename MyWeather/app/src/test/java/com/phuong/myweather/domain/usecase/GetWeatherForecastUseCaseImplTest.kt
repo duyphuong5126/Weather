@@ -19,6 +19,9 @@ import org.junit.Assert.assertEquals
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import org.mockito.Mockito.`when` as whenever
 
 class GetWeatherForecastUseCaseImplTest {
@@ -26,9 +29,16 @@ class GetWeatherForecastUseCaseImplTest {
 
     private val useCaseImpl = GetWeatherForecastUseCaseImpl(repository)
 
+    private val today: Date
+
+    init {
+        val dateFormat = SimpleDateFormat("EEE',' dd MMM yyyy HH':'mm':'ss 'GMT'", Locale.US)
+        today = dateFormat.parse("Sun, 03 Jan 2021 09:09:09 GMT")!!
+    }
+
     @Test
     fun `execute, raw search query's length is not enough`() {
-        useCaseImpl.execute("s", 1, Celsius)
+        useCaseImpl.execute("s", today, 1, Celsius)
             .test()
             .assertValue {
                 assertTrue(it is ValidationError)
@@ -38,6 +48,7 @@ class GetWeatherForecastUseCaseImplTest {
 
         verify(repository, never()).getDailyForecast(
             safeAnyString(),
+            any(Date::class.java),
             safeAnyInt(),
             any(TemperatureUnit::class.java)
         )
@@ -45,7 +56,7 @@ class GetWeatherForecastUseCaseImplTest {
 
     @Test
     fun `execute, days range is 0`() {
-        useCaseImpl.execute("saigon", 0, Celsius)
+        useCaseImpl.execute("saigon", today, 0, Celsius)
             .test()
             .assertValue {
                 assertTrue(it is InvalidDayRange)
@@ -55,6 +66,7 @@ class GetWeatherForecastUseCaseImplTest {
 
         verify(repository, never()).getDailyForecast(
             safeAnyString(),
+            any(Date::class.java),
             safeAnyInt(),
             any(TemperatureUnit::class.java)
         )
@@ -62,10 +74,10 @@ class GetWeatherForecastUseCaseImplTest {
 
     @Test
     fun `execute, raw search query contains both upper case and lower case chars`() {
-        whenever(repository.getDailyForecast("saigon", 1, Celsius))
+        whenever(repository.getDailyForecast("saigon", today, 1, Celsius))
             .thenReturn(Single.just(listOf(Day1ForecastCelsius)))
 
-        useCaseImpl.execute("SaIgOn", 1, Celsius)
+        useCaseImpl.execute("SaIgOn", today, 1, Celsius)
             .test()
             .assertValue {
                 assertTrue(it is ForecastResults)
@@ -73,15 +85,15 @@ class GetWeatherForecastUseCaseImplTest {
                 true
             }
 
-        verify(repository).getDailyForecast("saigon", 1, Celsius)
+        verify(repository).getDailyForecast("saigon", today, 1, Celsius)
     }
 
     @Test
     fun `execute, raw search query contains leading, middle and trailing whitespace`() {
-        whenever(repository.getDailyForecast("ha noi", 1, Celsius))
+        whenever(repository.getDailyForecast("ha noi", today, 1, Celsius))
             .thenReturn(Single.just(listOf(Day1ForecastCelsius)))
 
-        useCaseImpl.execute(" Ha Noi ", 1, Celsius)
+        useCaseImpl.execute(" Ha Noi ", today, 1, Celsius)
             .test()
             .assertValue {
                 assertTrue(it is ForecastResults)
@@ -89,7 +101,7 @@ class GetWeatherForecastUseCaseImplTest {
                 true
             }
 
-        verify(repository).getDailyForecast("ha noi", 1, Celsius)
+        verify(repository).getDailyForecast("ha noi", today, 1, Celsius)
     }
 
     companion object {
