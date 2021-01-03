@@ -9,6 +9,7 @@ import com.phuong.myweather.domain.entity.Temperature
 import com.phuong.myweather.domain.entity.TemperatureUnit.Companion.fromUnitCode
 import com.phuong.myweather.domain.entity.TemperatureUnit.Celsius
 import com.phuong.myweather.domain.entity.WeatherForecast
+import com.phuong.myweather.view.WeatherForecastUiModel
 import java.util.Date
 
 object TestDataProvider {
@@ -67,6 +68,22 @@ object TestDataProvider {
             humidity = humidity,
             description = description,
             searchQuery = searchQuery
+        )
+    }
+
+    fun generateWeatherForecastUiModel(
+        date: String = "Sun, 03 Jan 2021",
+        averageTemperature: String = "29°C",
+        pressure: Int = 1014,
+        humidity: String = "60%",
+        description: String = "light rain"
+    ): WeatherForecastUiModel {
+        return WeatherForecastUiModel(
+            date = date,
+            averageTemperature = averageTemperature,
+            pressure = pressure,
+            humidity = humidity,
+            description = description
         )
     }
 }

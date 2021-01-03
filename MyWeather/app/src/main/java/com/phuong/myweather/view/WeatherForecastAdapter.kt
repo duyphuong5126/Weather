@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.phuong.myweather.R
 import kotlinx.android.synthetic.main.item_weather_forecast.view.text_average_temp
@@ -40,9 +41,11 @@ class WeatherForecastAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int = forecastList.size
 
     fun updateWeatherForecast(weatherForecastList: List<WeatherForecastUiModel>) {
+        val weatherForecastDiffUtil = WeatherForecastDiffUtil(forecastList, weatherForecastList)
+        val diffResult = DiffUtil.calculateDiff(weatherForecastDiffUtil)
         forecastList.clear()
         forecastList.addAll(weatherForecastList)
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     private class WeatherForecastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
